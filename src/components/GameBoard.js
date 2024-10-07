@@ -1,37 +1,41 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import Card from './Card';
 
 const GameBoard = ({ onGameOver }) => {
   const [cards, setCards] = useState([]);
   const [firstCard, setFirstCard] = useState(null);
   const [lockMode, setLockMode] = useState(false);
-  const techs = [
-    'bootstrap',
-    'css',
-    'electron',
-    'firebase',
-    'html',
-    'javascript',
-    'jquery',
-    'mongo',
-    'node',
-    'react',
-  ];
 
-  const createCardsFromTechs = () => {
+  const techs = useMemo(
+    () => [
+      'bootstrap',
+      'css',
+      'electron',
+      'firebase',
+      'html',
+      'javascript',
+      'jquery',
+      'mongo',
+      'node',
+      'react',
+    ],
+    [],
+  );
+
+  const createPairFromTech = useCallback((tech) => {
+    return [
+      { id: createIdWithTech(tech), icon: tech, flipped: false },
+      { id: createIdWithTech(tech), icon: tech, flipped: false },
+    ];
+  }, []);
+
+  const createCardsFromTechs = useCallback(() => {
     let generatedCards = [];
     techs.forEach((tech) => {
       generatedCards.push(...createPairFromTech(tech));
     });
     shuffleCards(generatedCards);
-  };
-
-  const createPairFromTech = (tech) => {
-    return [
-      { id: createIdWithTech(tech), icon: tech, flipped: false },
-      { id: createIdWithTech(tech), icon: tech, flipped: false },
-    ];
-  };
+  }, [techs, createPairFromTech]);
 
   const createIdWithTech = (tech) => {
     return `${tech}-${Date.now()}-${Math.random()}`;
@@ -58,13 +62,12 @@ const GameBoard = ({ onGameOver }) => {
       setFirstCard(card);
     } else {
       setLockMode(true);
-      // Verifique se o ícone do primeiro cartão corresponde ao segundo
       if (firstCard.icon === card.icon) {
         setFirstCard(null);
         if (updatedCards.every((c) => c.flipped)) {
           onGameOver();
         }
-        setLockMode(false); // Desativa o lockMode imediatamente após encontrar um par
+        setLockMode(false);
       } else {
         setTimeout(() => {
           const resetCards = updatedCards.map((c) =>
@@ -74,7 +77,7 @@ const GameBoard = ({ onGameOver }) => {
           );
           setCards(resetCards);
           setFirstCard(null);
-          setLockMode(false); // Desativa o lockMode após redefinir os cartões
+          setLockMode(false);
         }, 1000);
       }
     }
@@ -82,7 +85,7 @@ const GameBoard = ({ onGameOver }) => {
 
   useEffect(() => {
     createCardsFromTechs();
-  }, []);
+  }, [createCardsFromTechs]);
 
   return (
     <div id="gameBoard">
