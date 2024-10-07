@@ -45,7 +45,7 @@ body {
 #gameOver {
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.5);
   color: white;
   font-size: 50px;
   display: none;
