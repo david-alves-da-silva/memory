@@ -1,27 +1,41 @@
-import React, { useState } from 'react';
-import GameBoard from './components/GameBoard';
-import GameOver from './components/GameOver';
+import React from 'react';
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import LoginPage from './pages/LoginPage';
+import GameBoard from './pages/GameBoard';
 import './assets/styles/style.css';
+import RegisterPage from './pages/RegisterPage';
+import Home from './components/Home';
 
 const App = () => {
-  const [isGameOver, setIsGameOver] = useState(false);
-
-  const handleGameOver = () => {
-    setIsGameOver(true);
-  };
-
-  const handleRestart = () => {
-    setIsGameOver(false);
-  };
+  const isAuthenticated = useSelector((state) => !!state.auth.token); // Verifica o token no estado Redux
 
   return (
-    <div>
-      {isGameOver ? (
-        <GameOver onRestart={handleRestart} />
-      ) : (
-        <GameBoard onGameOver={handleGameOver} />
-      )}
-    </div>
+    <Router>
+      <Routes>
+        <Route
+          path="/login"
+          element={isAuthenticated ? <Navigate to="/home" /> : <LoginPage />}
+        />
+
+        <Route path="/register" element={<RegisterPage />} />
+
+        <Route path="/home" element={<Home />} />
+
+        <Route path="/game" element={<GameBoard />} />
+
+        <Route path="/memory" element={<Navigate to="/login" />} />
+
+        <Route path="*" element={<Navigate to="/login" />} />
+
+        <Route path="/" element={<Navigate to="/login" />} />
+      </Routes>
+    </Router>
   );
 };
 

@@ -1,10 +1,14 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
-import Card from './Card';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import Card from '../components/Card';
 
 const GameBoard = ({ onGameOver }) => {
   const [cards, setCards] = useState([]);
   const [firstCard, setFirstCard] = useState(null);
   const [lockMode, setLockMode] = useState(false);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const techs = useMemo(
     () => [
@@ -30,10 +34,7 @@ const GameBoard = ({ onGameOver }) => {
   }, []);
 
   const createCardsFromTechs = useCallback(() => {
-    let generatedCards = [];
-    techs.forEach((tech) => {
-      generatedCards.push(...createPairFromTech(tech));
-    });
+    const generatedCards = techs.flatMap(createPairFromTech);
     shuffleCards(generatedCards);
   }, [techs, createPairFromTech]);
 
@@ -87,11 +88,29 @@ const GameBoard = ({ onGameOver }) => {
     createCardsFromTechs();
   }, [createCardsFromTechs]);
 
+  // Função para logout
+  const handleLogout = () => {
+    dispatch({ type: 'LOGOUT' }); // Despacha a ação de logout
+    navigate('/login'); // Redireciona para a página de login
+  };
+
   return (
-    <div id="gameBoard">
-      {cards.map((card) => (
-        <Card key={card.id} {...card} onClick={() => flipCard(card.id)} />
-      ))}
+    <div className="game-container">
+      {/* Tabuleiro de cartas */}
+      <div className="cards-container">
+        {cards.map((card) => (
+          <Card key={card.id} {...card} onClick={() => flipCard(card.id)} />
+        ))}
+      </div>
+
+      {/* Botões na parte inferior */}
+      <div className="game-buttons">
+        <button onClick={() => navigate('/')}>Sair</button>{' '}
+        {/* Volta para a Home */}
+        <button onClick={() => navigate('/home')}>Home</button>{' '}
+        {/* Vai para a Home */}
+        <button onClick={handleLogout}>Logout</button> {/* Faz logout */}
+      </div>
     </div>
   );
 };
