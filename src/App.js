@@ -11,6 +11,7 @@ import GameBoard from './pages/GameBoard';
 import './assets/styles/style.css';
 import RegisterPage from './pages/RegisterPage';
 import Home from './components/Home';
+import GameOver from './pages/GameOver';
 
 const App = () => {
   const isAuthenticated = useSelector((state) => !!state.auth.token); // Verifica o token no estado Redux
@@ -28,6 +29,8 @@ const App = () => {
         <Route path="/home" element={<Home />} />
 
         <Route path="/game" element={<GameBoard />} />
+
+        <Route path="/over" element={<GameOver />} />
 
         <Route path="/memory" element={<Navigate to="/login" />} />
 

@@ -1,14 +1,17 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Card from '../components/Card';
+import { fetchRecord, saveRecordRequest } from '../redux/actions/gameActions';
 
-const GameBoard = ({ onGameOver }) => {
+const GameBoard = () => {
   const [cards, setCards] = useState([]);
   const [firstCard, setFirstCard] = useState(null);
   const [lockMode, setLockMode] = useState(false);
+  const [time, setTime] = useState(0);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const record = useSelector((state) => state.game.record); // Acessa o recorde do Redux
 
   const techs = useMemo(
     () => [
@@ -66,7 +69,12 @@ const GameBoard = ({ onGameOver }) => {
       if (firstCard.icon === card.icon) {
         setFirstCard(null);
         if (updatedCards.every((c) => c.flipped)) {
-          onGameOver();
+          // Se todas as cartas estão viradas, salva o recorde
+          const username = localStorage.getItem('username'); // Obtém o nome do usuário
+          if (record === null || time < record.time) {
+            handleGameEnd(time, username); // Passa o username para salvar o recorde
+          }
+          navigate('/over'); // Redireciona para a tela de finalização
         }
         setLockMode(false);
       } else {
@@ -85,8 +93,22 @@ const GameBoard = ({ onGameOver }) => {
   };
 
   useEffect(() => {
+    const username = localStorage.getItem('username'); // Pega o username da sessão
+    dispatch(fetchRecord(username)); // Busca o recorde ao montar o componente
     createCardsFromTechs();
-  }, [createCardsFromTechs]);
+
+    // Inicia o cronômetro
+    const timer = setInterval(() => {
+      setTime((prevTime) => prevTime + 1); // Incrementa o tempo a cada segundo
+    }, 1000);
+
+    return () => clearInterval(timer); // Limpa o intervalo ao desmontar o componente
+  }, [createCardsFromTechs, dispatch]);
+
+  // Função para salvar o recorde ao final do jogo
+  const handleGameEnd = (time, username) => {
+    dispatch(saveRecordRequest(username, time)); // Salva o recorde ao final do jogo
+  };
 
   // Função para logout
   const handleLogout = () => {
@@ -96,6 +118,16 @@ const GameBoard = ({ onGameOver }) => {
 
   return (
     <div className="game-container">
+      {/* Exibição do tempo e recorde */}
+      <div className="timer-record">
+        <div className="timer">Tempo: {time}s</div>
+        {record !== null && (
+          <div className="record">
+            Recorde: {record.time}s por {record.username}
+          </div>
+        )}
+      </div>
+
       {/* Tabuleiro de cartas */}
       <div className="cards-container">
         {cards.map((card) => (
@@ -105,11 +137,9 @@ const GameBoard = ({ onGameOver }) => {
 
       {/* Botões na parte inferior */}
       <div className="game-buttons">
-        <button onClick={() => navigate('/login')}>Sair</button>{' '}
-        {/* Volta para a Home */}
-        <button onClick={() => navigate('/home')}>Home</button>{' '}
-        {/* Vai para a Home */}
-        <button onClick={handleLogout}>Logout</button> {/* Faz logout */}
+        <button onClick={() => navigate('/login')}>Sair</button>
+        <button onClick={() => navigate('/home')}>Home</button>
+        <button onClick={handleLogout}>Logout</button>
       </div>
     </div>
   );

@@ -12,9 +12,11 @@ const RegisterPage = () => {
   const [password, setPassword] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
+  const [verificationCode, setVerificationCode] = useState(''); // Novo estado para o código de verificação
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+  const [codeSent, setCodeSent] = useState(false); // Estado para saber se o código foi enviado
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -37,12 +39,11 @@ const RegisterPage = () => {
         email,
       );
       setSuccess(response.data.message);
+      setCodeSent(true); // Define que o código foi enviado
 
-      // A lógica de login pode ser ajustada dependendo de como você quer gerenciar a autenticação
-      // Se a resposta não incluir o token, você pode removê-lo daqui
-      localStorage.setItem('token', response.data.token);
-      dispatch(loginSuccess({ username, token: response.data.token }));
-      navigate('/home');
+      // Salva o token se necessário (dependendo da lógica do seu app)
+      // localStorage.setItem('token', response.data.token);
+      // dispatch(loginSuccess({ username, token: response.data.token }));
     } catch (err) {
       // Manipulação de erros
       setError(err.response?.data?.message || 'Erro ao cadastrar usuário.');
@@ -51,64 +52,105 @@ const RegisterPage = () => {
     }
   };
 
+  const handleVerifyCode = async (e) => {
+    e.preventDefault();
+
+    if (!verificationCode) {
+      setError('Por favor, insira o código de verificação.');
+      return;
+    }
+
+    try {
+      const response = await apiService.verifyCode(username, verificationCode);
+
+      // Supondo que o backend retorne a estrutura correta
+      localStorage.setItem('token', response.data.token); // Salva o token, se necessário
+      dispatch(loginSuccess({ username, token: response.data.token }));
+      navigate('/home');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Erro ao verificar o código.');
+    }
+  };
+
   return (
     <div className="register-container">
       <h1>Cadastrar</h1>
       {error && <div className="error">{error}</div>}
       {success && <div className="success">{success}</div>}
-      <form onSubmit={handleRegister}>
-        <div className="input-group">
-          <label htmlFor="username">Usuário</label>
-          <input
-            type="text"
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            autoComplete="username"
-          />
-        </div>
-        <div className="input-group">
-          <label htmlFor="email">E-mail</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            autoComplete="email"
-          />
-        </div>
-        <div className="input-group">
-          <label htmlFor="password">Senha</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            autoComplete="new-password"
-          />
-        </div>
-        <div className="input-group">
-          <label htmlFor="phone">Telefone</label>
-          <input
-            type="text"
-            id="phone"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            required
-            autoComplete="tel"
-          />
-        </div>
-        <button type="submit" disabled={loading}>
-          {loading ? 'Cadastrando...' : 'Cadastrar'}
-        </button>
-      </form>
-      <div className="login-link">
+      {!codeSent ? (
+        <form onSubmit={handleRegister}>
+          <div className="input-group">
+            <label htmlFor="username">Usuário</label>
+            <input
+              type="text"
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              autoComplete="username"
+            />
+          </div>
+          <div className="input-group">
+            <label htmlFor="email">E-mail</label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoComplete="email"
+            />
+          </div>
+          <div className="input-group">
+            <label htmlFor="password">Senha</label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              autoComplete="new-password"
+            />
+          </div>
+          <div className="input-group">
+            <label htmlFor="phone">Telefone</label>
+            <input
+              type="text"
+              id="phone"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              required
+              autoComplete="tel"
+            />
+          </div>
+          <button className="button-container" type="submit" disabled={loading}>
+            {loading ? 'Cadastrando...' : 'Cadastrar'}
+          </button>
+        </form>
+      ) : (
+        <form onSubmit={handleVerifyCode}>
+          <div className="input-group">
+            <label htmlFor="verificationCode">Código de Verificação</label>
+            <input
+              type="text"
+              id="verificationCode"
+              value={verificationCode}
+              onChange={(e) => setVerificationCode(e.target.value)}
+              required
+            />
+          </div>
+          <button type="submit">Verificar Código</button>
+        </form>
+      )}
+      <div className="login-link button-container">
         <p>
           Já tem uma conta?{' '}
-          <button onClick={() => navigate('/login')}>Login</button>
+          <button
+            className="button-container"
+            onClick={() => navigate('/login')}
+          >
+            Login
+          </button>
         </p>
       </div>
     </div>

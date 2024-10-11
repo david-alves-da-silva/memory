@@ -82,10 +82,15 @@ const LoginPage = () => {
           {isLoading ? 'Carregando...' : 'Entrar'}
         </button>
       </form>
-      <div className="register-container">
+      <div className="register-container button-container">
         <p>
           Não tem uma conta?{' '}
-          <button onClick={() => navigate('/register')}>Cadastrar</button>
+          <button
+            className="button-container"
+            onClick={() => navigate('/register')}
+          >
+            Cadastrar
+          </button>
         </p>
       </div>
     </div>

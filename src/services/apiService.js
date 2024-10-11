@@ -48,6 +48,35 @@ const apiService = {
     }
   },
 
+  saveRecord: async (username, time) => {
+    try {
+      console.log('Chamando a API para salvar record:', { username, time });
+      const response = await axios.post(`${API_URL}/game/record`, {
+        username,
+        time,
+      });
+      console.log('Resposta da API no serviço:', response.data);
+      return response;
+    } catch (error) {
+      console.error('Erro ao salvar recorde:', error.message);
+      throw new Error('Erro ao salvar o recorde: ' + error.message);
+    }
+  },
+
+  fetchRecord: async (username) => {
+    try {
+      console.log('Buscando recorde para o usuário:', username);
+      const response = await axios.get(`${API_URL}/game/record`, {
+        params: { username }, // Passando o username como query parameter
+      });
+      console.log('Resposta da API ao buscar recorde:', response.data);
+      return response;
+    } catch (error) {
+      console.error('Erro ao buscar recorde:', error.message);
+      throw new Error('Erro ao buscar o recorde: ' + error.message);
+    }
+  },
+
   // Adicione outros métodos conforme necessário
 };
 

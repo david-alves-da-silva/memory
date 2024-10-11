@@ -1,21 +1,130 @@
-/* Estilos do container geral do jogo */
-.game-container {
+/* Reset de estilo global */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Estilos do body */
+body {
+  font-family: 'Righteous', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #c7cdd3;
+}
+
+/* Estilos do container principal para a página de login */
+.login-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  height: 100vh;
+  align-items: center;
+  height: 100vh; /* Faz com que ocupe toda a altura da viewport */
+  padding: 20px;
 }
 
-/* Layout do tabuleiro de cartas */
-.cards-container {
-  max-width: 700px;
-  display: grid;
-  grid-template: 1fr 1fr 1fr 1fr 1fr / 1fr 1fr 1fr 1fr;
-  gap: 20px;
-  margin-bottom: 20px; /* Espaçamento entre o tabuleiro e os botões */
+/* Título da página */
+.login-container h1 {
+  margin-bottom: 20px; /* Espaçamento abaixo do título */
+  color: #333; /* Cor do texto do título */
 }
 
+/* Estilo para grupos de entrada */
+.input-group {
+  margin-bottom: 15px; /* Espaçamento entre os campos de entrada */
+  width: 100%; /* Largura completa */
+  max-width: 400px; /* Largura máxima */
+}
+
+/* Estilo para labels */
+.input-group label {
+  display: block; /* Faz com que o label ocupe toda a linha */
+  margin-bottom: 5px; /* Espaçamento abaixo do label */
+  color: #555; /* Cor do texto do label */
+}
+
+/* Estilo para inputs */
+.input-group input {
+  width: 100%; /* Largura completa */
+  padding: 10px; /* Espaçamento interno */
+  border: 1px solid #ccc; /* Borda sutil */
+  border-radius: 5px; /* Bordas arredondadas */
+  font-size: 16px; /* Tamanho da fonte */
+}
+
+/* Estilo para botões */
+button {
+  width: 100%; /* Largura completa */
+  padding: 10px; /* Espaçamento interno */
+  border: none; /* Sem borda */
+  border-radius: 5px; /* Bordas arredondadas */
+  background-color: #4caf50; /* Cor de fundo verde */
+  color: white; /* Cor do texto do botão */
+  font-size: 16px; /* Tamanho da fonte */
+  cursor: pointer; /* Cursor como ponteiro */
+  transition: background-color 0.3s; /* Transição suave para a cor de fundo */
+}
+
+.button-container {
+  width: 100%; /* Largura completa para o contêiner */
+  max-width: 300px; /* A mesma largura máxima dos outros botões */
+  margin-top: 10px; /* Espaçamento acima do botão */
+}
+
+.button-container button {
+  width: 80%;
+}
+
+.common-button {
+  width: 100%; /* Largura completa para os botões */
+  margin: 0.5em;
+  padding: 10px; /* Espaçamento interno */
+  border: none; /* Sem borda */
+  border-radius: 5px; /* Bordas arredondadas */
+  background-color: #4caf50; /* Cor de fundo verde */
+  color: white; /* Cor do texto */
+  font-size: 16px; /* Tamanho da fonte */
+  cursor: pointer; /* Cursor como ponteiro */
+  transition: background-color 0.3s; /* Transição suave para a cor de fundo */
+}
+
+/* Efeito de hover no botão */
+button:hover {
+  background-color: #45a049; /* Cor do botão ao passar o mouse */
+}
+
+/* Estilo para mensagens de erro e sucesso */
+.error,
+.success {
+  width: 100%; /* Largura completa */
+  max-width: 400px; /* Largura máxima */
+  padding: 10px; /* Espaçamento interno */
+  margin-bottom: 15px; /* Espaçamento abaixo das mensagens */
+  border-radius: 5px; /* Bordas arredondadas */
+  text-align: center; /* Centraliza o texto */
+}
+
+/* Cor de fundo para a mensagem de erro */
+.error {
+  background-color: #ffcccb; /* Vermelho claro */
+  color: #d8000c; /* Vermelho escuro */
+}
+
+/* Cor de fundo para a mensagem de sucesso */
+.success {
+  background-color: #d4edda; /* Verde claro */
+  color: #155724; /* Verde escuro */
+}
+
+/* Container para o link de registro */
+.register-container {
+  margin-top: 20px; /* Espaçamento acima do container de registro */
+  text-align: center; /* Centraliza o texto */
+}
+
+/* Estilos para o jogo */
 .card {
   width: 150px;
   height: 150px;
@@ -37,6 +146,10 @@
   backface-visibility: hidden;
 }
 
+.flip {
+  transform: rotateY(180deg);
+}
+
 .card_front {
   transform: rotateY(180deg);
   background-color: #101c2c;
@@ -45,9 +158,163 @@
 .card_back {
   color: #101c2c;
   background-color: #05c3ff;
+  font-size: 2em;
 }
 
-/* Estilos dos botões de navegação */
+/* Estilo para a tela de Game Over */
+#gameOver {
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  font-size: 50px;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  top: 0;
+}
+
+#text {
+  margin: 0 30px;
+}
+
+#restart {
+  height: 4em;
+  width: 12em;
+  color: white;
+  font-weight: bold;
+  padding: 20px;
+  font-size: 20px;
+  background-color: rgb(80, 200, 88);
+  border: none;
+  border-radius: 20px;
+  margin-top: 10px;
+}
+
+/* Estilos do container de cartas */
+.cards-container {
+  max-width: 700px;
+  display: grid;
+  grid-template: 1fr 1fr 1fr 1fr 1fr / 1fr 1fr 1fr 1fr;
+  gap: 20px;
+}
+
+.home-container {
+  display: flex; /* Ativa o Flexbox */
+  flex-direction: column; /* Organiza os elementos em coluna */
+  justify-content: center; /* Centraliza verticalmente */
+  align-items: center; /* Centraliza horizontalmente */
+  height: 100vh; /* Faz com que ocupe toda a altura da viewport */
+  padding: 20px; /* Espaçamento interno */
+}
+
+.home-container h1 {
+  color: #101c2c; /* Cor do texto do título */
+  font-size: 2.5em; /* Tamanho da fonte do título principal */
+  margin-bottom: 15px; /* Espaçamento abaixo do título */
+  text-align: center; /* Centraliza o título */
+}
+
+.home-container h2 {
+  color: red;
+  font-size: 1.5em; /* Tamanho da fonte do subtítulo */
+  margin: 10px 0; /* Espaçamento acima e abaixo do subtítulo */
+  text-align: center; /* Centraliza o subtítulo */
+}
+
+.home-container p {
+  color: #333; /* Cor do texto do parágrafo */
+  font-size: 1.2em; /* Tamanho da fonte do parágrafo */
+  line-height: 1.5; /* Espaçamento entre linhas para melhor legibilidade */
+  text-align: center; /* Centraliza o texto do parágrafo */
+  max-width: 600px; /* Largura máxima para melhor leitura */
+  margin: 0 auto; /* Centraliza o parágrafo dentro da sua área */
+  padding: 0 20px; /* Espaçamento lateral */
+}
+
+.timer-record {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 600px; /* Largura máxima para o contêiner */
+  margin: 0 auto; /* Centraliza o contêiner na tela */
+  padding: 10px; /* Espaçamento interno */
+  background-color: #e0f7fa; /* Cor de fundo clara */
+  border-radius: 10px; /* Bordas arredondadas */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra sutil */
+}
+
+/* Estilo para o tempo */
+.timer {
+  font-size: 1.5em; /* Tamanho da fonte do cronômetro */
+  color: #00796b; /* Cor do texto do cronômetro */
+}
+
+/* Estilo para o recorde */
+.record {
+  font-size: 1.5em; /* Tamanho da fonte do recorde */
+  color: #d32f2f; /* Cor do texto do recorde */
+  display: block; /* Certifique-se de que o elemento está sendo exibido */
+  visibility: visible;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  .card {
+    width: 100px;
+    height: 100px;
+  }
+
+  .icon {
+    width: 70px;
+    height: 70px;
+  }
+
+  #gameBoard {
+    max-width: 90%;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+  }
+
+  #gameOver {
+    font-size: 40px;
+  }
+
+  #restart {
+    padding: 15px;
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    width: 70px;
+    height: 70px;
+  }
+
+  .icon {
+    width: 50px;
+    height: 50px;
+  }
+
+  #gameBoard {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  #gameOver {
+    font-size: 30px;
+  }
+
+  #restart {
+    padding: 10px;
+    font-size: 16px;
+  }
+}
+
+/* Estilos dos botões do jogo */
 .game-buttons {
   display: flex;
   justify-content: space-between;
@@ -71,146 +338,4 @@
 
 .game-buttons button:hover {
   background-color: #0056b3;
-}
-
-/* Media Queries */
-
-/* Para tablets e telas menores */
-@media (max-width: 768px) {
-  .card {
-    width: 100px;
-    height: 100px;
-  }
-  .cards-container {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 15px;
-  }
-  .game-buttons button {
-    font-size: 14px;
-    padding: 8px 16px;
-  }
-}
-
-/* Para dispositivos móveis pequenos */
-@media (max-width: 480px) {
-  .card {
-    width: 70px;
-    height: 70px;
-  }
-  .cards-container {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-  }
-  .game-buttons button {
-    font-size: 12px;
-    padding: 6px 12px;
-  }
-}
-/* Estilos para o Home */
-.home-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  background-color: #f9f9f9; /* Fundo leve para destacar o conteúdo */
-}
-
-h1 {
-  font-size: 2.5em;
-  margin-bottom: 20px;
-  color: #333;
-}
-
-.welcome-message {
-  font-size: 1.5em;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.description {
-  text-align: center;
-  margin-bottom: 30px;
-  font-size: 1.2em;
-  color: #333; /* Cor do texto */
-}
-
-.description h2 {
-  font-size: 1.8em;
-  margin-bottom: 10px;
-  color: #555;
-}
-
-.button-container {
-  display: flex;
-  gap: 15px; /* Espaço entre os botões */
-}
-
-.play-button,
-.logout-button {
-  padding: 10px 20px;
-  font-size: 1em;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.play-button {
-  background-color: #28a745;
-  color: white;
-}
-
-.play-button:hover {
-  background-color: #218838; /* Escurece o botão quando passa o mouse */
-}
-
-.logout-button {
-  background-color: #dc3545;
-  color: white;
-}
-
-.logout-button:hover {
-  background-color: #c82333; /* Escurece o botão quando passa o mouse */
-}
-
-/* Media Queries para telas menores */
-@media (max-width: 768px) {
-  h1 {
-    font-size: 2em;
-  }
-
-  .welcome-message {
-    font-size: 1.2em;
-  }
-
-  .description h2 {
-    font-size: 1.5em;
-  }
-
-  .play-button,
-  .logout-button {
-    font-size: 0.9em;
-    padding: 8px 15px;
-  }
-}
-
-@media (max-width: 480px) {
-  h1 {
-    font-size: 1.8em;
-  }
-
-  .welcome-message {
-    font-size: 1.1em;
-  }
-
-  .description h2 {
-    font-size: 1.2em;
-  }
-
-  .play-button,
-  .logout-button {
-    font-size: 0.8em;
-    padding: 6px 10px;
-  }
 }

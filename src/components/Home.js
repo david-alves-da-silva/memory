@@ -48,13 +48,13 @@ const Home = () => {
         </p>
       </div>
       <div className="button-container">
-        <button className="play-button" onClick={handlePlay}>
+        <button className="common-button" onClick={handlePlay}>
           Jogar
         </button>
-        <button className="logout-button" onClick={handleLogout}>
+        <button className="common-button" onClick={handleLogout}>
           Sair
         </button>
-        <button className="delete-account-button" onClick={handleDeleteAccount}>
+        <button className="common-button" onClick={handleDeleteAccount}>
           Excluir Conta
         </button>
       </div>

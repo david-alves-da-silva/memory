@@ -13,11 +13,16 @@ function* login(action) {
       action.payload,
     );
 
-    // Armazena o token no localStorage
+    // Armazena o token e o username no localStorage
     yield call(
       [localStorage, 'setItem'],
       'token',
       `Bearer ${response.data.token}`,
+    );
+    yield call(
+      [localStorage, 'setItem'],
+      'username',
+      response.data.username, // Armazena o username
     );
 
     // Despacha a ação de sucesso com os dados do usuário
