@@ -19,12 +19,16 @@ const RegisterPage = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
 
+    // Validação básica para campos obrigatórios
     if (!username || !password || !phone || !email) {
       setError('Por favor, preencha todos os campos.');
       return;
     }
 
     setLoading(true); // Inicia o carregamento
+    setError(''); // Limpa erros anteriores
+    setSuccess(''); // Limpa mensagens de sucesso anteriores
+
     try {
       const response = await apiService.register(
         username,
@@ -33,10 +37,14 @@ const RegisterPage = () => {
         email,
       );
       setSuccess(response.data.message);
+
+      // A lógica de login pode ser ajustada dependendo de como você quer gerenciar a autenticação
+      // Se a resposta não incluir o token, você pode removê-lo daqui
       localStorage.setItem('token', response.data.token);
-      dispatch(loginSuccess({ username, token: response.data.token })); // Inclui o token
+      dispatch(loginSuccess({ username, token: response.data.token }));
       navigate('/home');
     } catch (err) {
+      // Manipulação de erros
       setError(err.response?.data?.message || 'Erro ao cadastrar usuário.');
     } finally {
       setLoading(false); // Finaliza o carregamento
@@ -57,6 +65,7 @@ const RegisterPage = () => {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
+            autoComplete="username"
           />
         </div>
         <div className="input-group">
@@ -67,6 +76,7 @@ const RegisterPage = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            autoComplete="email"
           />
         </div>
         <div className="input-group">
@@ -77,6 +87,7 @@ const RegisterPage = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            autoComplete="new-password"
           />
         </div>
         <div className="input-group">
@@ -87,6 +98,7 @@ const RegisterPage = () => {
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             required
+            autoComplete="tel"
           />
         </div>
         <button type="submit" disabled={loading}>

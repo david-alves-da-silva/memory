@@ -105,7 +105,7 @@ const GameBoard = ({ onGameOver }) => {
 
       {/* Botões na parte inferior */}
       <div className="game-buttons">
-        <button onClick={() => navigate('/')}>Sair</button>{' '}
+        <button onClick={() => navigate('/login')}>Sair</button>{' '}
         {/* Volta para a Home */}
         <button onClick={() => navigate('/home')}>Home</button>{' '}
         {/* Vai para a Home */}

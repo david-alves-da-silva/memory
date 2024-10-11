@@ -1,6 +1,6 @@
 const initialState = {
   token: null,
-  username: null, // Armazenar o nome de usuário
+  username: null,
   error: null,
 };
 

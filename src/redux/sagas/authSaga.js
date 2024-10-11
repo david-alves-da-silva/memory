@@ -1,7 +1,7 @@
 import { call, put, takeEvery } from 'redux-saga/effects';
 import axios from 'axios';
 
-const API_URL = process.env.API_URL; // Atualize para a URL da sua API
+const API_URL = process.env.REACT_APP_API_URL; // Atualize para a URL da sua API
 
 // Função geradora para o login
 function* login(action) {
@@ -14,10 +14,21 @@ function* login(action) {
     );
 
     // Armazena o token no localStorage
-    yield call([localStorage, 'setItem'], 'token', response.data.token);
+    yield call(
+      [localStorage, 'setItem'],
+      'token',
+      `Bearer ${response.data.token}`,
+    );
 
     // Despacha a ação de sucesso com os dados do usuário
-    yield put({ type: 'LOGIN_SUCCESS', payload: response.data });
+    yield put({
+      type: 'LOGIN_SUCCESS',
+      payload: {
+        message: 'Login bem-sucedido!',
+        token: response.data.token,
+        username: response.data.username,
+      },
+    });
 
     // Aqui você pode adicionar a lógica para enviar o código de verificação
     // Por exemplo: yield call(sendVerificationCode, response.data.user.email);
