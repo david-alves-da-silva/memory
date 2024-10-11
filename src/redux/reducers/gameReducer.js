@@ -8,7 +8,7 @@ import {
 } from '../actions/gameActions';
 
 const initialState = {
-  record: null,
+  record: 500,
   loading: false,
   error: null,
 };
