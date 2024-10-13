@@ -1,31 +1,30 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom'; // Importa useNavigate
+import { useNavigate } from 'react-router-dom';
 import '../assets/styles/style.css';
 
 const GameOver = () => {
-  const navigate = useNavigate(); // Cria uma instância de navigate
+  const navigate = useNavigate();
 
   const handleRestart = () => {
     navigate('/game'); // Redireciona para a página /game
   };
 
   return (
-    <div
-      id="gameOver"
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
-      }}
-    >
-      <div id="text" style={{ fontSize: '2rem', marginBottom: '20px' }}>
-        Congratulations!
-      </div>
-      <button id="restart" onClick={handleRestart} aria-label="Play Again">
-        Play Again 👍
+    <div className="container">
+      <h1 className="game-over-title">Parabéns!</h1>
+      <p className="game-over-message">Você completou o jogo com sucesso!</p>
+      <button
+        className="common-button"
+        onClick={handleRestart}
+        aria-label="Jogar Novamente"
+      >
+        Jogar Novamente 👍
       </button>
+      <div className="button-container">
+        <button className="common-button" onClick={() => navigate('/home')}>
+          Voltar para Home
+        </button>
+      </div>
     </div>
   );
 };

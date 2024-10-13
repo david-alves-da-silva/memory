@@ -51,11 +51,11 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="login-container">
+    <div className="container">
       <h1>Login</h1>
       {error && <div className="error">{error}</div>}
       {success && <div className="success">{success}</div>}
-      <form onSubmit={handleLogin}>
+      <form className="button-container" onSubmit={handleLogin}>
         <div className="input-group">
           <label htmlFor="username">Usuário</label>
           <input
@@ -81,18 +81,13 @@ const LoginPage = () => {
         <button type="submit" disabled={isLoading}>
           {isLoading ? 'Carregando...' : 'Entrar'}
         </button>
+        <div>
+          <p>
+            Não tem uma conta?{' '}
+            <button onClick={() => navigate('/register')}>Cadastrar</button>
+          </p>
+        </div>
       </form>
-      <div className="register-container button-container">
-        <p>
-          Não tem uma conta?{' '}
-          <button
-            className="button-container"
-            onClick={() => navigate('/register')}
-          >
-            Cadastrar
-          </button>
-        </p>
-      </div>
     </div>
   );
 };

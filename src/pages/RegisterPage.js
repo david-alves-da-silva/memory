@@ -12,24 +12,23 @@ const RegisterPage = () => {
   const [password, setPassword] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
-  const [verificationCode, setVerificationCode] = useState(''); // Novo estado para o código de verificação
+  const [verificationCode, setVerificationCode] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
-  const [codeSent, setCodeSent] = useState(false); // Estado para saber se o código foi enviado
+  const [codeSent, setCodeSent] = useState(false);
 
   const handleRegister = async (e) => {
     e.preventDefault();
-
-    // Validação básica para campos obrigatórios
+    console.log('Tentando registrar...');
     if (!username || !password || !phone || !email) {
       setError('Por favor, preencha todos os campos.');
       return;
     }
 
-    setLoading(true); // Inicia o carregamento
-    setError(''); // Limpa erros anteriores
-    setSuccess(''); // Limpa mensagens de sucesso anteriores
+    setLoading(true);
+    setError('');
+    setSuccess('');
 
     try {
       const response = await apiService.register(
@@ -39,22 +38,17 @@ const RegisterPage = () => {
         email,
       );
       setSuccess(response.data.message);
-      setCodeSent(true); // Define que o código foi enviado
-
-      // Salva o token se necessário (dependendo da lógica do seu app)
-      // localStorage.setItem('token', response.data.token);
-      // dispatch(loginSuccess({ username, token: response.data.token }));
+      setCodeSent(true);
     } catch (err) {
-      // Manipulação de erros
       setError(err.response?.data?.message || 'Erro ao cadastrar usuário.');
     } finally {
-      setLoading(false); // Finaliza o carregamento
+      setLoading(false);
     }
   };
 
   const handleVerifyCode = async (e) => {
     e.preventDefault();
-
+    console.log('Tentando verificar código...');
     if (!verificationCode) {
       setError('Por favor, insira o código de verificação.');
       return;
@@ -62,9 +56,7 @@ const RegisterPage = () => {
 
     try {
       const response = await apiService.verifyCode(username, verificationCode);
-
-      // Supondo que o backend retorne a estrutura correta
-      localStorage.setItem('token', response.data.token); // Salva o token, se necessário
+      localStorage.setItem('token', response.data.token);
       dispatch(loginSuccess({ username, token: response.data.token }));
       navigate('/home');
     } catch (err) {
@@ -73,12 +65,12 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="register-container">
+    <div className="container">
       <h1>Cadastrar</h1>
       {error && <div className="error">{error}</div>}
       {success && <div className="success">{success}</div>}
       {!codeSent ? (
-        <form onSubmit={handleRegister}>
+        <form className="button-container" onSubmit={handleRegister}>
           <div className="input-group">
             <label htmlFor="username">Usuário</label>
             <input
@@ -123,12 +115,12 @@ const RegisterPage = () => {
               autoComplete="tel"
             />
           </div>
-          <button className="button-container" type="submit" disabled={loading}>
+          <button type="submit" disabled={loading}>
             {loading ? 'Cadastrando...' : 'Cadastrar'}
           </button>
         </form>
       ) : (
-        <form onSubmit={handleVerifyCode}>
+        <form className="button-container" onSubmit={handleVerifyCode}>
           <div className="input-group">
             <label htmlFor="verificationCode">Código de Verificação</label>
             <input
@@ -142,15 +134,10 @@ const RegisterPage = () => {
           <button type="submit">Verificar Código</button>
         </form>
       )}
-      <div className="login-link button-container">
+      <div className="button-container">
         <p>
           Já tem uma conta?{' '}
-          <button
-            className="button-container"
-            onClick={() => navigate('/login')}
-          >
-            Login
-          </button>
+          <button onClick={() => navigate('/login')}>Login</button>
         </p>
       </div>
     </div>

@@ -2,7 +2,11 @@ import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Card from '../components/Card';
-import { fetchRecord, saveRecordRequest } from '../redux/actions/gameActions';
+import {
+  fetchRecordRequest,
+  saveRecordRequest,
+} from '../redux/actions/gameActions';
+import '../assets/styles/style.css';
 
 const GameBoard = () => {
   const [cards, setCards] = useState([]);
@@ -11,7 +15,7 @@ const GameBoard = () => {
   const [time, setTime] = useState(0);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const record = useSelector((state) => state.game.record); // Acessa o recorde do Redux
+  const record = useSelector((state) => state.game.record);
 
   const techs = useMemo(
     () => [
@@ -69,12 +73,11 @@ const GameBoard = () => {
       if (firstCard.icon === card.icon) {
         setFirstCard(null);
         if (updatedCards.every((c) => c.flipped)) {
-          // Se todas as cartas estão viradas, salva o recorde
-          const username = localStorage.getItem('username'); // Obtém o nome do usuário
+          const username = localStorage.getItem('username');
           if (record === null || time < record.time) {
-            handleGameEnd(time, username); // Passa o username para salvar o recorde
+            handleGameEnd(time, username);
           }
-          navigate('/over'); // Redireciona para a tela de finalização
+          setTimeout(() => navigate('/over'), 1000);
         }
         setLockMode(false);
       } else {
@@ -93,53 +96,56 @@ const GameBoard = () => {
   };
 
   useEffect(() => {
-    const username = localStorage.getItem('username'); // Pega o username da sessão
-    dispatch(fetchRecord(username)); // Busca o recorde ao montar o componente
+    const username = localStorage.getItem('username');
+    if (!record) dispatch(fetchRecordRequest(username));
     createCardsFromTechs();
 
-    // Inicia o cronômetro
     const timer = setInterval(() => {
-      setTime((prevTime) => prevTime + 1); // Incrementa o tempo a cada segundo
+      setTime((prevTime) => prevTime + 1);
     }, 1000);
 
-    return () => clearInterval(timer); // Limpa o intervalo ao desmontar o componente
-  }, [createCardsFromTechs, dispatch]);
+    return () => clearInterval(timer);
+  }, [createCardsFromTechs, dispatch, record]);
 
-  // Função para salvar o recorde ao final do jogo
   const handleGameEnd = (time, username) => {
-    dispatch(saveRecordRequest(username, time)); // Salva o recorde ao final do jogo
+    dispatch(saveRecordRequest(username, time));
   };
 
-  // Função para logout
   const handleLogout = () => {
-    dispatch({ type: 'LOGOUT' }); // Despacha a ação de logout
-    navigate('/login'); // Redireciona para a página de login
+    localStorage.removeItem('username');
+    dispatch({ type: 'LOGOUT' });
+    navigate('/login');
   };
 
   return (
-    <div className="game-container">
-      {/* Exibição do tempo e recorde */}
+    <div className="container">
+      <h1>Nivel 1</h1>
       <div className="timer-record">
-        <div className="timer">Tempo: {time}s</div>
-        {record !== null && (
-          <div className="record">
-            Recorde: {record.time}s por {record.username}
-          </div>
-        )}
+        <div className="timer">{time}</div>
+        <div className="record">
+          {record ? (
+            <>
+              {record.time} {record.username}
+            </>
+          ) : (
+            'Nenhum recorde disponível.'
+          )}
+        </div>
       </div>
 
-      {/* Tabuleiro de cartas */}
       <div className="cards-container">
         {cards.map((card) => (
           <Card key={card.id} {...card} onClick={() => flipCard(card.id)} />
         ))}
       </div>
 
-      {/* Botões na parte inferior */}
-      <div className="game-buttons">
-        <button onClick={() => navigate('/login')}>Sair</button>
-        <button onClick={() => navigate('/home')}>Home</button>
-        <button onClick={handleLogout}>Logout</button>
+      <div className="button-container">
+        <button className="common-button" onClick={() => navigate('/home')}>
+          Sair
+        </button>
+        <button className="common-button atention" onClick={handleLogout}>
+          Desconectar
+        </button>
       </div>
     </div>
   );

@@ -15,71 +15,49 @@ body {
   background-color: #c7cdd3;
 }
 
-/* Estilos do container principal para a página de login */
-.login-container {
+/* Estilos do container principal */
+.container {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* Faz com que ocupe toda a altura da viewport */
+  height: 100vh;
   padding: 20px;
+  text-align: center;
 }
 
 /* Título da página */
-.login-container h1 {
-  margin-bottom: 20px; /* Espaçamento abaixo do título */
-  color: #333; /* Cor do texto do título */
+.container h1 {
+  margin-bottom: 20px;
+  color: #333;
 }
 
 /* Estilo para grupos de entrada */
 .input-group {
-  margin-bottom: 15px; /* Espaçamento entre os campos de entrada */
-  width: 100%; /* Largura completa */
-  max-width: 400px; /* Largura máxima */
+  margin-bottom: 15px;
+  width: 100%;
+  max-width: 400px;
 }
 
 /* Estilo para labels */
 .input-group label {
-  display: block; /* Faz com que o label ocupe toda a linha */
-  margin-bottom: 5px; /* Espaçamento abaixo do label */
-  color: #555; /* Cor do texto do label */
+  display: block;
+  margin-bottom: 5px;
+  color: #555;
 }
 
 /* Estilo para inputs */
 .input-group input {
-  width: 100%; /* Largura completa */
-  padding: 10px; /* Espaçamento interno */
-  border: 1px solid #ccc; /* Borda sutil */
-  border-radius: 5px; /* Bordas arredondadas */
-  font-size: 16px; /* Tamanho da fonte */
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
 }
 
-/* Estilo para botões */
+/* Estilo global para botões */
 button {
-  width: 100%; /* Largura completa */
-  padding: 10px; /* Espaçamento interno */
-  border: none; /* Sem borda */
-  border-radius: 5px; /* Bordas arredondadas */
-  background-color: #4caf50; /* Cor de fundo verde */
-  color: white; /* Cor do texto do botão */
-  font-size: 16px; /* Tamanho da fonte */
-  cursor: pointer; /* Cursor como ponteiro */
-  transition: background-color 0.3s; /* Transição suave para a cor de fundo */
-}
-
-.button-container {
-  width: 100%; /* Largura completa para o contêiner */
-  max-width: 300px; /* A mesma largura máxima dos outros botões */
-  margin-top: 10px; /* Espaçamento acima do botão */
-}
-
-.button-container button {
-  width: 80%;
-}
-
-.common-button {
-  width: 100%; /* Largura completa para os botões */
-  margin: 0.5em;
+  width: 100%; /* Largura total do botão */
   padding: 10px; /* Espaçamento interno */
   border: none; /* Sem borda */
   border-radius: 5px; /* Bordas arredondadas */
@@ -88,6 +66,7 @@ button {
   font-size: 16px; /* Tamanho da fonte */
   cursor: pointer; /* Cursor como ponteiro */
   transition: background-color 0.3s; /* Transição suave para a cor de fundo */
+  margin: 0.5em 0; /* Margem para espaçamento vertical entre botões */
 }
 
 /* Efeito de hover no botão */
@@ -95,33 +74,41 @@ button:hover {
   background-color: #45a049; /* Cor do botão ao passar o mouse */
 }
 
+/* Estilos do container de botões */
+.button-container {
+  width: 100%;
+  max-width: 300px;
+  margin-top: 10px;
+  display: flex; /* Ativa o Flexbox */
+  flex-direction: column; /* Organiza os itens em coluna */
+  align-items: center; /* Centraliza os itens horizontalmente */
+}
+
+.atention {
+  background-color: rgb(227, 113, 113);
+}
+
 /* Estilo para mensagens de erro e sucesso */
 .error,
 .success {
-  width: 100%; /* Largura completa */
-  max-width: 400px; /* Largura máxima */
-  padding: 10px; /* Espaçamento interno */
-  margin-bottom: 15px; /* Espaçamento abaixo das mensagens */
-  border-radius: 5px; /* Bordas arredondadas */
-  text-align: center; /* Centraliza o texto */
+  width: 100%;
+  max-width: 400px;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  text-align: center;
 }
 
 /* Cor de fundo para a mensagem de erro */
 .error {
-  background-color: #ffcccb; /* Vermelho claro */
-  color: #d8000c; /* Vermelho escuro */
+  background-color: #ffcccb;
+  color: #d8000c;
 }
 
 /* Cor de fundo para a mensagem de sucesso */
 .success {
-  background-color: #d4edda; /* Verde claro */
-  color: #155724; /* Verde escuro */
-}
-
-/* Container para o link de registro */
-.register-container {
-  margin-top: 20px; /* Espaçamento acima do container de registro */
-  text-align: center; /* Centraliza o texto */
+  background-color: #d4edda;
+  color: #155724;
 }
 
 /* Estilos para o jogo */
@@ -168,7 +155,7 @@ button:hover {
   background-color: rgba(0, 0, 0, 0.5);
   color: white;
   font-size: 50px;
-  display: none;
+  display: flex; /* Alinha o conteúdo */
   justify-content: center;
   align-items: center;
   flex-direction: column;
@@ -200,37 +187,14 @@ button:hover {
   gap: 20px;
 }
 
-.home-container {
-  display: flex; /* Ativa o Flexbox */
-  flex-direction: column; /* Organiza os elementos em coluna */
-  justify-content: center; /* Centraliza verticalmente */
-  align-items: center; /* Centraliza horizontalmente */
-  height: 100vh; /* Faz com que ocupe toda a altura da viewport */
-  padding: 20px; /* Espaçamento interno */
-}
-
-.home-container h1 {
-  color: #101c2c; /* Cor do texto do título */
-  font-size: 2.5em; /* Tamanho da fonte do título principal */
-  margin-bottom: 15px; /* Espaçamento abaixo do título */
-  text-align: center; /* Centraliza o título */
-}
-
-.home-container h2 {
-  color: red;
-  font-size: 1.5em; /* Tamanho da fonte do subtítulo */
-  margin: 10px 0; /* Espaçamento acima e abaixo do subtítulo */
-  text-align: center; /* Centraliza o subtítulo */
-}
-
 .home-container p {
-  color: #333; /* Cor do texto do parágrafo */
-  font-size: 1.2em; /* Tamanho da fonte do parágrafo */
-  line-height: 1.5; /* Espaçamento entre linhas para melhor legibilidade */
-  text-align: center; /* Centraliza o texto do parágrafo */
-  max-width: 600px; /* Largura máxima para melhor leitura */
-  margin: 0 auto; /* Centraliza o parágrafo dentro da sua área */
-  padding: 0 20px; /* Espaçamento lateral */
+  color: #333;
+  font-size: 1.2em;
+  line-height: 1.5;
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
 .timer-record {
@@ -238,25 +202,25 @@ button:hover {
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  max-width: 600px; /* Largura máxima para o contêiner */
-  margin: 0 auto; /* Centraliza o contêiner na tela */
-  padding: 10px; /* Espaçamento interno */
-  background-color: #e0f7fa; /* Cor de fundo clara */
-  border-radius: 10px; /* Bordas arredondadas */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra sutil */
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 10px;
+  background-color: #e0f7fa;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 /* Estilo para o tempo */
 .timer {
-  font-size: 1.5em; /* Tamanho da fonte do cronômetro */
-  color: #00796b; /* Cor do texto do cronômetro */
+  font-size: 1.5em;
+  color: #00796b;
 }
 
 /* Estilo para o recorde */
 .record {
-  font-size: 1.5em; /* Tamanho da fonte do recorde */
-  color: #d32f2f; /* Cor do texto do recorde */
-  display: block; /* Certifique-se de que o elemento está sendo exibido */
+  font-size: 1.5em;
+  color: #d32f2f;
+  display: block;
   visibility: visible;
 }
 
@@ -338,4 +302,17 @@ button:hover {
 
 .game-buttons button:hover {
   background-color: #0056b3;
+}
+
+/* Estilos específicos para a tela de Game Over */
+.game-over-title {
+  font-size: 2rem; /* Ajuste do tamanho da fonte */
+  margin-bottom: 20px; /* Margem inferior */
+  color: #4caf50; /* Cor do título */
+}
+
+.game-over-message {
+  font-size: 1.2rem; /* Ajuste do tamanho da fonte */
+  margin-bottom: 20px; /* Margem inferior */
+  color: #333; /* Cor da mensagem */
 }

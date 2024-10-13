@@ -8,26 +8,24 @@ import {
 } from '../actions/gameActions';
 
 const initialState = {
-  record: 500,
+  record: null,
   loading: false,
   error: null,
 };
 
 const gameReducer = (state = initialState, action) => {
   switch (action.type) {
-    // Para salvar o recorde
     case SAVE_RECORD_REQUEST:
       return { ...state, loading: true, error: null };
     case SAVE_RECORD_SUCCESS:
-      return { ...state, loading: false, record: action.payload }; // Aqui você pode atualizar o recorde
+      return { ...state, loading: false, record: action.payload };
     case SAVE_RECORD_FAILURE:
       return { ...state, loading: false, error: action.payload };
 
-    // Para buscar o recorde
     case FETCH_RECORD_REQUEST:
       return { ...state, loading: true, error: null };
     case FETCH_RECORD_SUCCESS:
-      return { ...state, loading: false, record: action.payload }; // Atualiza o recorde buscado
+      return { ...state, loading: false, record: action.payload };
     case FETCH_RECORD_FAILURE:
       return { ...state, loading: false, error: action.payload };
 

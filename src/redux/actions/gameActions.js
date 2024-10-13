@@ -1,6 +1,3 @@
-// src/redux/actions/gameActions.js
-
-// Tipos de ações
 export const SAVE_RECORD_REQUEST = 'SAVE_RECORD_REQUEST';
 export const SAVE_RECORD_SUCCESS = 'SAVE_RECORD_SUCCESS';
 export const SAVE_RECORD_FAILURE = 'SAVE_RECORD_FAILURE';
@@ -11,35 +8,34 @@ export const FETCH_RECORD_FAILURE = 'FETCH_RECORD_FAILURE';
 // Ação para solicitar a gravação do recorde
 export const saveRecordRequest = (username, time) => ({
   type: SAVE_RECORD_REQUEST,
-  payload: { username, time }, // Envia o username e o tempo como payload
+  payload: { username, time },
 });
 
 // Ação para indicar que o recorde foi salvo com sucesso
 export const saveRecordSuccess = (record) => ({
   type: SAVE_RECORD_SUCCESS,
-  payload: record, // Envia o recorde salvo como payload
+  payload: record,
 });
 
-// Ação para indicar que houve um erro ao salvar o recorde
+// Ação para indicar erro ao salvar o recorde
 export const saveRecordFailure = (error) => ({
   type: SAVE_RECORD_FAILURE,
-  payload: error, // Envia a mensagem de erro como payload
+  payload: error,
 });
 
-// Ação para buscar o recorde
-export const fetchRecord = (username) => ({
-  type: FETCH_RECORD_REQUEST, // Tipo da ação
-  payload: { username },
+// Ação para buscar o recorde global
+export const fetchRecordRequest = () => ({
+  type: FETCH_RECORD_REQUEST,
 });
 
-// Ação para indicar que o recorde foi buscado com sucesso
+// Ação para indicar sucesso na busca do recorde
 export const fetchRecordSuccess = (record) => ({
   type: FETCH_RECORD_SUCCESS,
-  payload: record, // Envia o recorde buscado como payload
+  payload: record,
 });
 
-// Ação para indicar que houve um erro ao buscar o recorde
+// Ação para indicar erro ao buscar o recorde
 export const fetchRecordFailure = (error) => ({
   type: FETCH_RECORD_FAILURE,
-  payload: error, // Envia a mensagem de erro como payload
+  payload: error,
 });
