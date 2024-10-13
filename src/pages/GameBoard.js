@@ -16,7 +16,7 @@ const GameBoard = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const record = useSelector((state) => state.game.record);
-  const [recordHolder, setRecordHolder] = useState(null); // Estado para armazenar o detentor do recorde
+  const [recordHolder, setRecordHolder] = useState(null);
 
   const techs = useMemo(
     () => [
@@ -99,26 +99,21 @@ const GameBoard = () => {
   useEffect(() => {
     const username = localStorage.getItem('username');
     if (!record) dispatch(fetchRecordRequest(username));
-    createCardsFromTechs();
-
-    // Função para buscar o detentor do recorde
-    const fetchRecordHolder = async () => {
-      try {
-        const response = await dispatch(fetchRecordRequest(username)); // Altere conforme necessário para obter o detentor do recorde
-        setRecordHolder(response.recordHolder); // Supondo que a resposta tenha o campo recordHolder
-      } catch (error) {
-        console.error('Erro ao buscar o detentor do recorde:', error);
-      }
-    };
-
-    fetchRecordHolder(); // Chama a função para buscar o detentor do recorde
+    // Verifica se o detentor do recorde é atualizado após carregar o estado
+    if (record && record.username) {
+      setRecordHolder(record.username);
+    }
 
     const timer = setInterval(() => {
       setTime((prevTime) => prevTime + 1);
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [createCardsFromTechs, dispatch, record]);
+  }, [dispatch, record]);
+
+  useEffect(() => {
+    createCardsFromTechs(); // Gera as cartas ao montar o componente
+  }, [createCardsFromTechs]); // Executa apenas uma vez na montagem inicial.
 
   const handleGameEnd = (time, username) => {
     dispatch(saveRecordRequest(username, time));
@@ -138,12 +133,12 @@ const GameBoard = () => {
     <div
       className="container"
       style={{
-        backgroundColor: isRecordHolder ? 'yellow' : 'green', // Altere 'defaultColor' para a cor padrão que deseja
-        height: '100vh', // Ajuste conforme necessário
-        width: '100%', // Ajuste conforme necessário
+        backgroundColor: isRecordHolder ? 'green' : 'yellow',
+        height: '100vh',
+        width: '100%',
       }}
     >
-      <h1>Nível 1</h1>
+      <h1>Nivel 1</h1>
       <div className="timer-record">
         <div className="timer">{time}</div>
         <div className="record">
