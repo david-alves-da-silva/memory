@@ -13,47 +13,64 @@ const GameBoard = () => {
   const [firstCard, setFirstCard] = useState(null);
   const [lockMode, setLockMode] = useState(false);
   const [time, setTime] = useState(0);
+  const [level, setLevel] = useState(1);
+  const [recordHolder, setRecordHolder] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const record = useSelector((state) => state.game.record);
-  const [recordHolder, setRecordHolder] = useState(null);
 
-  const techs = useMemo(
-    () => [
-      'bootstrap',
-      'css',
-      'electron',
-      'firebase',
-      'html',
-      'javascript',
-      'jquery',
-      'mongo',
-      'node',
-      'react',
+  const levels = useMemo(
+    () => ({
+      1: [
+        'bootstrap',
+        'css',
+        'electron',
+        'firebase',
+        'html',
+        'javascript',
+        'jquery',
+        'mongo',
+        'node',
+        'react',
+      ],
+      2: [
+        'corbac',
+        'corbacBack',
+        'dratak',
+        'hulk',
+        'hulkChuva',
+        'leonardo',
+        'pikachu',
+        'rafaelo',
+        'spider',
+        'spider2',
+      ],
+    }),
+    [],
+  );
+
+  const totalLevels = Object.keys(levels).length;
+
+  const createPairFromTech = useCallback(
+    (tech) => [
+      { id: createIdWithTech(tech), icon: tech, flipped: false },
+      { id: createIdWithTech(tech), icon: tech, flipped: false },
     ],
     [],
   );
 
-  const createPairFromTech = useCallback((tech) => {
-    return [
-      { id: createIdWithTech(tech), icon: tech, flipped: false },
-      { id: createIdWithTech(tech), icon: tech, flipped: false },
-    ];
-  }, []);
-
-  const createCardsFromTechs = useCallback(() => {
-    const generatedCards = techs.flatMap(createPairFromTech);
-    shuffleCards(generatedCards);
-  }, [techs, createPairFromTech]);
-
-  const createIdWithTech = (tech) => {
-    return `${tech}-${Date.now()}-${Math.random()}`;
-  };
+  const createIdWithTech = (tech) => `${tech}-${Date.now()}-${Math.random()}`;
 
   const shuffleCards = (generatedCards) => {
     const shuffled = [...generatedCards].sort(() => Math.random() - 0.5);
     setCards(shuffled);
   };
+
+  const createCardsFromTechs = useCallback(() => {
+    const techs = levels[level];
+    const generatedCards = techs.flatMap(createPairFromTech);
+    shuffleCards(generatedCards);
+  }, [level, levels, createPairFromTech]);
 
   const flipCard = (id) => {
     if (lockMode) return;
@@ -78,7 +95,7 @@ const GameBoard = () => {
           if (record === null || time < record.time) {
             handleGameEnd(time, username);
           }
-          setTimeout(() => navigate('/over'), 1000);
+          handleLevelCompletion(); // Verifica se vai para o próximo nível ou para /over
         }
         setLockMode(false);
       } else {
@@ -96,27 +113,20 @@ const GameBoard = () => {
     }
   };
 
-  useEffect(() => {
-    const username = localStorage.getItem('username');
-    if (!record) dispatch(fetchRecordRequest(username));
-    // Verifica se o detentor do recorde é atualizado após carregar o estado
-    if (record && record.username) {
-      setRecordHolder(record.username);
-    }
-
-    const timer = setInterval(() => {
-      setTime((prevTime) => prevTime + 1);
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [dispatch, record]);
-
-  useEffect(() => {
-    createCardsFromTechs(); // Gera as cartas ao montar o componente
-  }, [createCardsFromTechs]); // Executa apenas uma vez na montagem inicial.
-
   const handleGameEnd = (time, username) => {
     dispatch(saveRecordRequest(username, time));
+  };
+
+  const handleLevelCompletion = () => {
+    if (level < totalLevels) {
+      setLevel((prevLevel) => prevLevel + 1);
+      setCards([]);
+      setTime(0);
+      setFirstCard(null);
+      createCardsFromTechs();
+    } else {
+      navigate('/over'); // Redireciona ao finalizar o último nível
+    }
   };
 
   const handleLogout = () => {
@@ -125,7 +135,19 @@ const GameBoard = () => {
     navigate('/login');
   };
 
-  // Verifica se o usuário atual é o detentor do recorde
+  useEffect(() => {
+    const username = localStorage.getItem('username');
+    if (!record) dispatch(fetchRecordRequest(username));
+    if (record && record.username) setRecordHolder(record.username);
+
+    const timer = setInterval(() => setTime((prevTime) => prevTime + 1), 1000);
+    return () => clearInterval(timer);
+  }, [dispatch, record]);
+
+  useEffect(() => {
+    createCardsFromTechs();
+  }, [createCardsFromTechs]);
+
   const username = localStorage.getItem('username');
   const isRecordHolder = username === recordHolder;
 
@@ -138,7 +160,7 @@ const GameBoard = () => {
         width: '100%',
       }}
     >
-      <h1>Nivel 1</h1>
+      <h1>Nível {level}</h1>
       <div className="timer-record">
         <div className="timer">{time}</div>
         <div className="record">
@@ -159,6 +181,11 @@ const GameBoard = () => {
       </div>
 
       <div className="button-container">
+        {cards.every((card) => card.flipped) && level < totalLevels && (
+          <button className="common-button" onClick={handleLevelCompletion}>
+            Próximo Nível
+          </button>
+        )}
         <button className="common-button" onClick={() => navigate('/home')}>
           Sair
         </button>
