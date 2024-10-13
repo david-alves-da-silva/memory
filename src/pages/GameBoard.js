@@ -16,6 +16,7 @@ const GameBoard = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const record = useSelector((state) => state.game.record);
+  const [recordHolder, setRecordHolder] = useState(null); // Estado para armazenar o detentor do recorde
 
   const techs = useMemo(
     () => [
@@ -100,6 +101,18 @@ const GameBoard = () => {
     if (!record) dispatch(fetchRecordRequest(username));
     createCardsFromTechs();
 
+    // Função para buscar o detentor do recorde
+    const fetchRecordHolder = async () => {
+      try {
+        const response = await dispatch(fetchRecordRequest(username)); // Altere conforme necessário para obter o detentor do recorde
+        setRecordHolder(response.recordHolder); // Supondo que a resposta tenha o campo recordHolder
+      } catch (error) {
+        console.error('Erro ao buscar o detentor do recorde:', error);
+      }
+    };
+
+    fetchRecordHolder(); // Chama a função para buscar o detentor do recorde
+
     const timer = setInterval(() => {
       setTime((prevTime) => prevTime + 1);
     }, 1000);
@@ -117,9 +130,20 @@ const GameBoard = () => {
     navigate('/login');
   };
 
+  // Verifica se o usuário atual é o detentor do recorde
+  const username = localStorage.getItem('username');
+  const isRecordHolder = username === recordHolder;
+
   return (
-    <div className="container">
-      <h1>Nivel 1</h1>
+    <div
+      className="container"
+      style={{
+        backgroundColor: isRecordHolder ? 'yellow' : 'green', // Altere 'defaultColor' para a cor padrão que deseja
+        height: '100vh', // Ajuste conforme necessário
+        width: '100%', // Ajuste conforme necessário
+      }}
+    >
+      <h1>Nível 1</h1>
       <div className="timer-record">
         <div className="timer">{time}</div>
         <div className="record">
