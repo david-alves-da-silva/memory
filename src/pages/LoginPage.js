@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import '../assets/styles/style.css';
-import { loginRequest } from '../redux/actions/authActions'; // Corrija o import para usar a ação correta
+import { loginRequest } from '../redux/actions/authActions';
 
 const LoginPage = () => {
   const dispatch = useDispatch();
@@ -18,7 +18,7 @@ const LoginPage = () => {
     token,
     error: loginError,
     message,
-  } = useSelector((state) => state.auth); // Corrija o estado para 'auth'
+  } = useSelector((state) => state.auth);
 
   useEffect(() => {
     // Redireciona para /home se o token estiver presente
@@ -28,7 +28,11 @@ const LoginPage = () => {
 
     // Lida com erros de login
     if (loginError && loginError !== error) {
-      setError(loginError);
+      const errorMessage =
+        typeof loginError === 'string'
+          ? loginError
+          : loginError.message || 'Erro desconhecido';
+      setError(errorMessage);
       setIsLoading(false); // Desabilita o loading em caso de erro
     }
 
@@ -47,7 +51,7 @@ const LoginPage = () => {
     }
 
     setIsLoading(true);
-    dispatch(loginRequest(username, password)); // Use a ação de login correta
+    dispatch(loginRequest(username, password));
   };
 
   return (
@@ -84,7 +88,9 @@ const LoginPage = () => {
         <div>
           <p>
             Não tem uma conta?{' '}
-            <button onClick={() => navigate('/register')}>Cadastrar</button>
+            <button type="button" onClick={() => navigate('/register')}>
+              Cadastrar
+            </button>
           </p>
         </div>
       </form>

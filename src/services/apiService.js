@@ -38,11 +38,16 @@ const apiService = {
   deleteAccount: async () => {
     try {
       const token = localStorage.getItem('token');
+      if (!token)
+        throw new Error('Token não encontrado. Faça login novamente.');
       return await axios.delete(`${API_URL}/auth/exclude`, {
         headers: { Authorization: token },
       });
     } catch (error) {
-      throw new Error('Account deletion failed: ' + error.message);
+      throw new Error(
+        error.response?.data?.message ||
+          'Erro ao excluir a conta. Tente novamente.',
+      );
     }
   },
 
