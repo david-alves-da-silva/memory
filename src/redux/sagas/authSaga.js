@@ -48,8 +48,8 @@ function* login(action) {
 
 // Função geradora para o logout
 function* logout() {
-  localStorage.removeItem('token'); // Remove o token do armazenamento local
-  localStorage.removeItem('username'); // Remove o nome do armazenamento local
+  yield call([localStorage, 'removeItem'], 'token');
+  yield call([localStorage, 'removeItem'], 'username');
   yield put({ type: 'LOGOUT_SUCCESS' }); // Ação de sucesso
 }
 

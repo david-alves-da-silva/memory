@@ -21,8 +21,12 @@ const LoginPage = () => {
   } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    // Redireciona para /home se o token estiver presente
-    if (token) {
+    // Limpa o localStorage se o usuário não estiver autenticado
+    if (!token) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('username');
+    } else {
+      // Redireciona para /home se o token estiver presente
       navigate('/home');
     }
 
