@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Confetti from 'react-confetti'; // Importa a biblioteca de confete
 import '../assets/styles/style.css';
+import happy from '../assets/musics/happy.mp3';
 
 const VictoryAnimation = ({ onComplete }) => {
   const [width, setWidth] = useState(window.innerWidth);
   const [height, setHeight] = useState(window.innerHeight);
+  const audioRef = useRef(null); // Ref para o elemento de áudio
 
   // Atualiza as dimensões da tela
   useEffect(() => {
@@ -30,7 +32,8 @@ const VictoryAnimation = ({ onComplete }) => {
       <Confetti width={width} height={height} />{' '}
       {/* Adiciona o efeito de confete */}
       <h2 className="victory-text">Você Venceu!</h2>
-      <div className="fireworks"></div>
+      <audio ref={audioRef} src={happy} autoPlay />{' '}
+      {/* Adiciona o caminho da sua música aqui */}
     </div>
   );
 };

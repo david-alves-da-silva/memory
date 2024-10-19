@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  useRef,
+} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Card from '../components/Card';
@@ -9,6 +15,7 @@ import {
   saveRecordRequest,
 } from '../redux/actions/gameActions';
 import '../assets/styles/style.css';
+import transitionSound from '../assets/musics/bomb.mp3'; // Importa o som
 
 const GameBoard = () => {
   const [cards, setCards] = useState([]);
@@ -23,6 +30,7 @@ const GameBoard = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const record = useSelector((state) => state.game.record);
+  const audioRef = useRef(new Audio(transitionSound));
 
   const levels = useMemo(
     () => ({
@@ -51,18 +59,7 @@ const GameBoard = () => {
         'spider2',
       ],
       3: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
-      4: [
-        'bootstrap',
-        'css',
-        'electron',
-        'firebase',
-        'html',
-        'javascript',
-        'jquery',
-        'mongo',
-        'node',
-        'react',
-      ],
+      4: ['11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],
     }),
     [],
   );
@@ -137,20 +134,22 @@ const GameBoard = () => {
   };
 
   const handleLevelCompletion = () => {
-    setShowTransitionAnimation(true); // Inicia a animação de transição
-    setTimeout(() => {
-      // Lógica para avançar o nível
-      if (level < totalLevels) {
+    if (level < totalLevels) {
+      setShowTransitionAnimation(true); // Inicia a animação de transição
+      audioRef.current.play();
+      setTimeout(() => {
+        // Lógica para avançar o nível
         setLevel((prevLevel) => prevLevel + 1);
         setCards([]);
         setTime(0);
         setFirstCard(null);
         createCardsFromTechs();
-      } else {
-        setShowVictoryAnimation(true);
-      }
-      setShowTransitionAnimation(false); // Oculta a animação de transição
-    }, 3000); // Duração da animação de transição
+        setShowTransitionAnimation(false); // Oculta a animação de transição
+      }, 3000); // Duração da animação de transição
+    } else {
+      // Se for o último nível, apenas mostra a animação de vitória
+      setShowVictoryAnimation(true);
+    }
   };
 
   useEffect(() => {
@@ -158,7 +157,7 @@ const GameBoard = () => {
       const timer = setTimeout(() => {
         setShowVictoryAnimation(false); // Oculta a animação após 4 segundos
         navigate('/over'); // Redireciona para /over
-      }, 4000); // 4 segundos de duração
+      }, 40000); // 4 segundos de duração
 
       return () => clearTimeout(timer); // Limpa o timer ao desmontar
     }
@@ -233,7 +232,7 @@ const GameBoard = () => {
       <div className="button-container">
         {cards.every((card) => card.flipped) && level < totalLevels && (
           <button
-            style={{ display: 'none' }}
+            // style={{ display: 'none' }}
             className="common-button"
             onClick={handleLevelCompletion}
           >
@@ -247,7 +246,7 @@ const GameBoard = () => {
           Desconectar
         </button>
         <button
-          style={{ display: 'none' }}
+          // style={{ display: 'none' }}
           className="common-button"
           onClick={() => setTestMode(!testMode)}
         >
@@ -255,7 +254,7 @@ const GameBoard = () => {
         </button>
         {testMode && (
           <button
-            style={{ display: 'none' }}
+            // style={{ display: 'none' }}
             className="common-button"
             onClick={handleLevelCompletion}
           >
@@ -264,7 +263,7 @@ const GameBoard = () => {
         )}
         {/* Botão para forçar a animação de vitória */}
         <button
-          style={{ display: 'none' }}
+          // style={{ display: 'none' }}
           className="common-button"
           onClick={() => {
             setShowVictoryAnimation(true);

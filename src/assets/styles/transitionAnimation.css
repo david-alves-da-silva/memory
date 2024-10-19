@@ -114,5 +114,29 @@
 }
 
 .tremor {
-  animation: shake 0.3s 3; /* Faz o tremor ocorrer 3 vezes */
+  animation: shake 0.1s 18;
+}
+.clown-face {
+  position: absolute;
+  width: 100px; /* Ajuste o tamanho conforme necessário */
+  height: 100px; /* Ajuste o tamanho conforme necessário */
+  top: 50%; /* Centraliza verticalmente */
+  left: 50%; /* Centraliza horizontalmente */
+  transform: translate(-50%, -50%) scale(0); /* Começa invisível */
+  animation: clownExplosion 0.8s forwards; /* Animação de explosão do palhaço */
+}
+
+@keyframes clownExplosion {
+  0% {
+    transform: translate(-50%, -50%) scale(0); /* Começa invisível */
+    opacity: 1; /* Totalmente visível */
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.5); /* Aumenta durante a animação */
+    opacity: 1; /* Totalmente visível */
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(3); /* Expande como na explosão */
+    opacity: 0; /* Desaparece ao final */
+  }
 }
