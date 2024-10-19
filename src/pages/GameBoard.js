@@ -2,6 +2,8 @@ import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Card from '../components/Card';
+import VictoryAnimation from '../components/VictoryAnimation';
+import TransitionAnimation from '../components/TransitionAnimation';
 import {
   fetchRecordRequest,
   saveRecordRequest,
@@ -15,6 +17,9 @@ const GameBoard = () => {
   const [time, setTime] = useState(0);
   const [level, setLevel] = useState(1);
   const [recordHolder, setRecordHolder] = useState(null);
+  const [showVictoryAnimation, setShowVictoryAnimation] = useState(false);
+  const [showTransitionAnimation, setShowTransitionAnimation] = useState(false);
+  const [testMode, setTestMode] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const record = useSelector((state) => state.game.record);
@@ -44,6 +49,19 @@ const GameBoard = () => {
         'rafaelo',
         'spider',
         'spider2',
+      ],
+      3: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+      4: [
+        'bootstrap',
+        'css',
+        'electron',
+        'firebase',
+        'html',
+        'javascript',
+        'jquery',
+        'mongo',
+        'node',
+        'react',
       ],
     }),
     [],
@@ -94,8 +112,9 @@ const GameBoard = () => {
           const username = localStorage.getItem('username');
           if (record === null || time < record.time) {
             handleGameEnd(time, username);
+            setShowVictoryAnimation(true);
           }
-          handleLevelCompletion(); // Verifica se vai para o próximo nível ou para /over
+          handleLevelCompletion();
         }
         setLockMode(false);
       } else {
@@ -118,21 +137,42 @@ const GameBoard = () => {
   };
 
   const handleLevelCompletion = () => {
-    if (level < totalLevels) {
-      setLevel((prevLevel) => prevLevel + 1);
-      setCards([]);
-      setTime(0);
-      setFirstCard(null);
-      createCardsFromTechs();
-    } else {
-      navigate('/over'); // Redireciona ao finalizar o último nível
-    }
+    setShowTransitionAnimation(true); // Inicia a animação de transição
+    setTimeout(() => {
+      // Lógica para avançar o nível
+      if (level < totalLevels) {
+        setLevel((prevLevel) => prevLevel + 1);
+        setCards([]);
+        setTime(0);
+        setFirstCard(null);
+        createCardsFromTechs();
+      } else {
+        setShowVictoryAnimation(true);
+      }
+      setShowTransitionAnimation(false); // Oculta a animação de transição
+    }, 3000); // Duração da animação de transição
   };
+
+  useEffect(() => {
+    if (showVictoryAnimation) {
+      const timer = setTimeout(() => {
+        setShowVictoryAnimation(false); // Oculta a animação após 4 segundos
+        navigate('/over'); // Redireciona para /over
+      }, 4000); // 4 segundos de duração
+
+      return () => clearTimeout(timer); // Limpa o timer ao desmontar
+    }
+  }, [showVictoryAnimation, navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem('username');
     dispatch({ type: 'LOGOUT' });
     navigate('/login');
+  };
+
+  const handleVictoryComplete = () => {
+    setShowVictoryAnimation(false);
+    navigate('/over');
   };
 
   useEffect(() => {
@@ -148,8 +188,7 @@ const GameBoard = () => {
     createCardsFromTechs();
   }, [createCardsFromTechs]);
 
-  const username = localStorage.getItem('username');
-  const isRecordHolder = username === recordHolder;
+  const isRecordHolder = localStorage.getItem('username') === recordHolder;
 
   return (
     <div
@@ -158,8 +197,19 @@ const GameBoard = () => {
         backgroundColor: isRecordHolder ? 'green' : 'yellow',
         height: '100vh',
         width: '100%',
+        position: 'relative',
       }}
     >
+      {showTransitionAnimation && (
+        <TransitionAnimation
+          onComplete={() => setShowTransitionAnimation(false)}
+        />
+      )}
+
+      {showVictoryAnimation && (
+        <VictoryAnimation onComplete={handleVictoryComplete} />
+      )}
+
       <h1>Nível {level}</h1>
       <div className="timer-record">
         <div className="timer">{time}</div>
@@ -182,7 +232,11 @@ const GameBoard = () => {
 
       <div className="button-container">
         {cards.every((card) => card.flipped) && level < totalLevels && (
-          <button className="common-button" onClick={handleLevelCompletion}>
+          <button
+            style={{ display: 'none' }}
+            className="common-button"
+            onClick={handleLevelCompletion}
+          >
             Próximo Nível
           </button>
         )}
@@ -191,6 +245,33 @@ const GameBoard = () => {
         </button>
         <button className="common-button atention" onClick={handleLogout}>
           Desconectar
+        </button>
+        <button
+          style={{ display: 'none' }}
+          className="common-button"
+          onClick={() => setTestMode(!testMode)}
+        >
+          {testMode ? 'Desativar Modo Teste' : 'Ativar Modo Teste'}
+        </button>
+        {testMode && (
+          <button
+            style={{ display: 'none' }}
+            className="common-button"
+            onClick={handleLevelCompletion}
+          >
+            Avançar Nível
+          </button>
+        )}
+        {/* Botão para forçar a animação de vitória */}
+        <button
+          style={{ display: 'none' }}
+          className="common-button"
+          onClick={() => {
+            setShowVictoryAnimation(true);
+            setTimeout(handleVictoryComplete, 3000); // Chama a função após 3 segundos
+          }}
+        >
+          Ver Animação de Vitória
         </button>
       </div>
     </div>
