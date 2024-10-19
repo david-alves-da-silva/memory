@@ -12,6 +12,7 @@ const LoginPage = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   // Pegue os dados do estado do Redux
   const {
@@ -46,6 +47,23 @@ const LoginPage = () => {
       setTimeout(() => setSuccess(''), 5000); // Limpa a mensagem após 5 segundos
     }
   }, [token, loginError, message, error, navigate]);
+
+  useEffect(() => {
+    let interval;
+    if (isLoading) {
+      setProgress(0); // Reinicia a barra
+      interval = setInterval(() => {
+        setProgress((prev) => {
+          if (prev >= 100) {
+            clearInterval(interval); // Para a animação ao chegar a 100%
+            return 100;
+          }
+          return prev + 1.67; // Incrementa 1.67% por segundo (60s / 100%)
+        });
+      }, 1000); // Executa a cada 1 segundo
+    }
+    return () => clearInterval(interval); // Limpa o intervalo ao desmontar ou interromper o loading
+  }, [isLoading]);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -89,6 +107,14 @@ const LoginPage = () => {
         <button type="submit" disabled={isLoading}>
           {isLoading ? 'Carregando...' : 'Entrar'}
         </button>
+        {isLoading && (
+          <div className="progress-bar-container">
+            <div
+              className="progress-bar"
+              style={{ width: `${progress}%` }}
+            ></div>
+          </div>
+        )}
         <div>
           <p>
             Não tem uma conta?{' '}
