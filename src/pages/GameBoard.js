@@ -232,7 +232,7 @@ const GameBoard = () => {
       <div className="button-container">
         {cards.every((card) => card.flipped) && level < totalLevels && (
           <button
-            // style={{ display: 'none' }}
+            style={{ display: 'none' }}
             className="common-button"
             onClick={handleLevelCompletion}
           >
@@ -246,7 +246,7 @@ const GameBoard = () => {
           Desconectar
         </button>
         <button
-          // style={{ display: 'none' }}
+          style={{ display: 'none' }}
           className="common-button"
           onClick={() => setTestMode(!testMode)}
         >
@@ -254,7 +254,7 @@ const GameBoard = () => {
         </button>
         {testMode && (
           <button
-            // style={{ display: 'none' }}
+            style={{ display: 'none' }}
             className="common-button"
             onClick={handleLevelCompletion}
           >
@@ -263,7 +263,7 @@ const GameBoard = () => {
         )}
         {/* Botão para forçar a animação de vitória */}
         <button
-          // style={{ display: 'none' }}
+          style={{ display: 'none' }}
           className="common-button"
           onClick={() => {
             setShowVictoryAnimation(true);
