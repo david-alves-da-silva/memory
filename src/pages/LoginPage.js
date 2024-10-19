@@ -58,7 +58,7 @@ const LoginPage = () => {
             clearInterval(interval); // Para a animação ao chegar a 100%
             return 100;
           }
-          return prev + 1.67; // Incrementa 1.67% por segundo (60s / 100%)
+          return prev + 2.5; // Incrementa 2.5% por segundo (100% / 40s)
         });
       }, 1000); // Executa a cada 1 segundo
     }
