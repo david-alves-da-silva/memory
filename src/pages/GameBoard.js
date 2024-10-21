@@ -15,7 +15,12 @@ import {
   saveRecordRequest,
 } from '../redux/actions/gameActions';
 import '../assets/styles/style.css';
-import transitionSound from '../assets/musics/bomb.mp3'; // Importa o som
+
+import transitionSound from '../assets/musics/bomb.mp3';
+import level1Music from '../assets/musics/postMalone.mp3';
+import level2Music from '../assets/musics/drake.mp3';
+import level3Music from '../assets/musics/michael.mp3';
+import level4Music from '../assets/musics/suspense.mp3';
 
 const GameBoard = () => {
   const [cards, setCards] = useState([]);
@@ -30,7 +35,19 @@ const GameBoard = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const record = useSelector((state) => state.game.record);
-  const audioRef = useRef(new Audio(transitionSound));
+  const audioRef = useRef(new Audio());
+  const transitionAudioRef = useRef(new Audio(transitionSound));
+
+  // Map de músicas por nível
+  const levelSounds = useMemo(
+    () => ({
+      1: level1Music,
+      2: level2Music,
+      3: level3Music,
+      4: level4Music,
+    }),
+    [],
+  );
 
   const levels = useMemo(
     () => ({
@@ -87,6 +104,30 @@ const GameBoard = () => {
     shuffleCards(generatedCards);
   }, [level, levels, createPairFromTech]);
 
+  const playLevelSound = useCallback(() => {
+    const audio = audioRef.current;
+
+    // Pausar qualquer áudio em execução antes de iniciar o novo
+    if (!audio.paused) {
+      audio.pause();
+      audio.currentTime = 0; // Reiniciar o áudio
+    }
+
+    // Definir a nova música e garantir que ela será carregada corretamente
+    audio.src = levelSounds[level];
+
+    // Adicionar um listener para garantir que o áudio está pronto
+    audio.addEventListener(
+      'canplaythrough',
+      () => {
+        audio.play().catch((error) => {
+          console.error('Erro ao reproduzir áudio:', error);
+        });
+      },
+      { once: true },
+    ); // Garantir que o evento seja disparado apenas uma vez
+  }, [level, levelSounds]);
+
   const flipCard = (id) => {
     if (lockMode) return;
 
@@ -133,24 +174,67 @@ const GameBoard = () => {
     dispatch(saveRecordRequest(username, time));
   };
 
-  const handleLevelCompletion = () => {
+  const playAudio = async (audio) => {
+    try {
+      await audio.play();
+    } catch (error) {
+      console.error('Erro ao reproduzir áudio:', error);
+    }
+  };
+
+  const stopAudio = async (audio) => {
+    if (!audio.paused) {
+      audio.pause();
+      audio.currentTime = 0; // Reinicia o áudio
+    }
+  };
+
+  const handleLevelCompletion = async () => {
     if (level < totalLevels) {
       setShowTransitionAnimation(true); // Inicia a animação de transição
-      audioRef.current.play();
-      setTimeout(() => {
-        // Lógica para avançar o nível
-        setLevel((prevLevel) => prevLevel + 1);
-        setCards([]);
-        setTime(0);
-        setFirstCard(null);
-        createCardsFromTechs();
-        setShowTransitionAnimation(false); // Oculta a animação de transição
-      }, 3000); // Duração da animação de transição
+      setLockMode(true); // Bloqueia interação enquanto ocorre a transição
+
+      try {
+        // Para a música do nível atual antes de tocar o som de transição
+        await stopAudio(audioRef.current);
+
+        // Toca o som de transição
+        await playAudio(transitionAudioRef.current);
+
+        // Duração da animação de transição
+        setTimeout(async () => {
+          await stopAudio(transitionAudioRef.current); // Para o som de transição
+
+          // Avança para o próximo nível e reseta o estado
+          setLevel((prevLevel) => prevLevel + 1);
+          setCards([]);
+          setTime(0);
+          setFirstCard(null);
+
+          createCardsFromTechs(); // Gera novas cartas
+          setLockMode(false); // Libera interação
+          setShowTransitionAnimation(false); // Oculta a animação de transição
+          // Aguarda um pequeno atraso antes de tocar a nova música
+          setTimeout(async () => {
+            audioRef.current.src = levelSounds[level + 1]; // Define a nova música
+            await playAudio(audioRef.current); // Toca a nova música
+          }, 4000); // Pequeno atraso para garantir que o nível foi atualizado
+        }, 3000); // Duração da animação de transição
+      } catch (error) {
+        console.error('Erro na transição de áudio:', error);
+      }
     } else {
-      // Se for o último nível, apenas mostra a animação de vitória
+      // Último nível: mostra a animação de vitória
       setShowVictoryAnimation(true);
     }
   };
+
+  useEffect(() => {
+    if (level <= totalLevels) {
+      createCardsFromTechs();
+      playLevelSound();
+    }
+  }, [level, createCardsFromTechs, playLevelSound, totalLevels]);
 
   useEffect(() => {
     if (showVictoryAnimation) {
@@ -165,6 +249,7 @@ const GameBoard = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('username');
+    audioRef.current.pause();
     dispatch({ type: 'LOGOUT' });
     navigate('/login');
   };
@@ -178,9 +263,14 @@ const GameBoard = () => {
     const username = localStorage.getItem('username');
     if (!record) dispatch(fetchRecordRequest(username));
     if (record && record.username) setRecordHolder(record.username);
-
+    const audio = audioRef.current;
+    const transitionAudio = transitionAudioRef.current;
     const timer = setInterval(() => setTime((prevTime) => prevTime + 1), 1000);
-    return () => clearInterval(timer);
+    return () => {
+      clearInterval(timer);
+      audio.pause();
+      transitionAudio.pause();
+    };
   }, [dispatch, record]);
 
   useEffect(() => {
@@ -232,29 +322,35 @@ const GameBoard = () => {
       <div className="button-container">
         {cards.every((card) => card.flipped) && level < totalLevels && (
           <button
-            style={{ display: 'none' }}
+            // style={{ display: 'none' }}
             className="common-button"
             onClick={handleLevelCompletion}
           >
             Próximo Nível
           </button>
         )}
-        <button className="common-button" onClick={() => navigate('/home')}>
+        <button
+          className="common-button"
+          onClick={() => {
+            audioRef.current.pause();
+            navigate('/home');
+          }}
+        >
           Sair
         </button>
         <button className="common-button atention" onClick={handleLogout}>
           Desconectar
         </button>
         <button
-          style={{ display: 'none' }}
+          // style={{ display: 'none' }}
           className="common-button"
           onClick={() => setTestMode(!testMode)}
         >
-          {testMode ? 'Desativar Modo Teste' : 'Ativar Modo Teste'}
+          {testMode ? 'Desativar Modo Hack' : 'Ativar Modo Hack'}
         </button>
         {testMode && (
           <button
-            style={{ display: 'none' }}
+            // style={{ display: 'none' }}
             className="common-button"
             onClick={handleLevelCompletion}
           >
@@ -263,7 +359,7 @@ const GameBoard = () => {
         )}
         {/* Botão para forçar a animação de vitória */}
         <button
-          style={{ display: 'none' }}
+          // style={{ display: 'none' }}
           className="common-button"
           onClick={() => {
             setShowVictoryAnimation(true);
